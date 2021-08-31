@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bot图片上传接口</title>
+</head>
+
+<body>
+    <div id='app'>
+        <el-form ref="form" :model="form" label-width="120px">
+            <el-form-item label="上传图片名称：">
+                <el-input v-model="form.name" placeholder='如：小黑自拍'></el-input>
+            </el-form-item>
+            <el-form-item>
+                <input type="file" name="image" accept="image/*" @change="uploadFile">
+            </el-form-item>
+            <el-form-item label="预览:">
+                <img style="height: 200px;" :src="form.imgSrc">
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="init" v-show="finish">再上传一张子</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<!-- 引入样式 -->
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/cos-js-sdk-v5/dist/cos-js-sdk-v5.min.js"></script>
+<script>
+    var cos = new COS({
+        SecretId: 'AKIDud5GBpCI7fwxgANJyMTJr88qHRKvGK7d',
+        SecretKey: 'HI1UgbEbgU1HGyOXQ3QWMuBBuMWQ2Wjf',
+    });
+    let vm = new Vue({
+        el: '#app',
+        data() {
+            return {
+                finish: false,
+                form: {
+                    name: '',
+                    imgSrc: ''
+                }
+            }
+        },
+        methods: {
+            init() {
+                this.form.name = '';
+                this.form.imgSrc = '';
+                this.finish = false
+            },
+            uploadFile(e) {
+                if(!this.form.name){
+                    alert('请输入文件名，哼！')
+                    return;
+                }
+                // 获取当前选中的文件
+                let oFile = e.target.files[0];
+                console.log(oFile)
+                let that = this
+                cos.putObject({
+                    Bucket: 'penpen-1302021874', /* 必须 */
+                    Region: 'ap-nanjing',     /* 存储桶所在地域，必须字段 */
+                    Key: that.form.name + '.png',              /* 必须 */
+                    StorageClass: 'STANDARD',
+                    Body: oFile, // 上传文件对象
+                }, function (err, data) {
+                    console.log(err || data);
+                    if(data){
+                        that.form.imgSrc = "http://" + data.Location;
+                        that.finish = true
+                        alert('上传成功！')
+                    }
+                });
+            }
+        }
+    })
+</script>
+
+<style>
+    #app {
+        max-width: 800px;
+    }
+</style>
+
+</html>
