@@ -48,7 +48,7 @@
     "check-node-version": "^4.1.0",
     "cross-env": "^7.0.3",
     "is-pr": "^2.0.0",
-    "wechaty-puppet-mock": "^0.29.8",
+    "wechaty-puppet-mock": "^0.31.6",
     "wechaty-puppet-padlocal": "^0.4.2",
     "wechaty-puppet-wechat": "^0.28.4",
     "wechaty-puppet-wechat4u": "^0.18",
